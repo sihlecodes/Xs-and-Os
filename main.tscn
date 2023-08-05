@@ -23,41 +23,83 @@ cache/0/16/0/underline_thickness = 0.0
 cache/0/16/0/scale = 1.0
 cache/0/16/0/kerning_overrides/16/0 = Vector2(0, 0)
 
-[node name="main" type="Node"]
+[node name="Game" type="Node"]
 script = ExtResource("4")
 theme = ExtResource("6")
 
 [node name="labels" type="VBoxContainer" parent="."]
-offset_left = 164.234
-offset_top = 16.9897
-offset_right = 308.234
-offset_bottom = 52.9897
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -104.0
+offset_top = 39.0
+offset_right = 109.0
+offset_bottom = 87.0
+grow_horizontal = 2
+theme_override_constants/separation = 0
 
 [node name="display" type="Label" parent="labels"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = SubResource("1")
 text = "X's turn."
+horizontal_alignment = 1
 uppercase = true
+metadata/_edit_lock_ = true
 
 [node name="hint" type="Label" parent="labels"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = SubResource("2")
 text = "Click on any cell on the board."
+horizontal_alignment = 1
+metadata/_edit_lock_ = true
 
-[node name="board" type="Node2D" parent="."]
+[node name="Board" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -200.0
+offset_right = 200.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("6")
 script = ExtResource("1")
+BOARD_SIZE = Vector2(400, 400)
+CELL_SIZE = Vector2(137.333, 137.333)
 
 [node name="button" type="Button" parent="."]
-offset_left = 232.193
-offset_top = 302.984
-offset_right = 289.193
-offset_bottom = 322.984
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -49.5
+offset_top = -85.0
+offset_right = 49.5
+offset_bottom = -46.0
+grow_horizontal = 2
+grow_vertical = 0
 theme = ExtResource("6")
 text = "RESTART"
 
 [node name="canvas" type="CanvasLayer" parent="."]
 
-[node name="strike" type="Node2D" parent="canvas"]
+[node name="Strike" type="Node2D" parent="canvas"]
+unique_name_in_owner = true
 script = ExtResource("5")
+theme = ExtResource("6")
+overshoot = 15
+
+[connection signal="game_completed" from="Board" to="." method="_on_game_completed"]
+[connection signal="game_tied" from="Board" to="." method="_on_game_tied"]
+[connection signal="game_won" from="Board" to="." method="_on_game_won"]
+[connection signal="pressed" from="button" to="." method="restart"]

@@ -1,29 +1,30 @@
-extends Node2D
+@tool
+extends Control
 
 class_name Board
 
-var ROWS = 3
-var COLS = 3
+@export var ROWS = 3
+@export var COLS = 3
 
 var _board  = []
 var _pieces = []
 
-@onready var theme: Theme = get_parent().theme
-
-const TYPES = Types.TYPES
-
 # values derived from the board art asset
-const PADDING: = Vector2(4, 4)
-const SPACING: = PADDING/2
-const BOARD_SIZE: = Vector2(376, 376)
-const CELL_SIZE: = Vector2(120, 120) + PADDING
+@export var border_width_inner: = 2
+@export var border_width_outer: = 4
+
+@export var BOARD_SIZE: = Vector2(376, 376) :
+	set(value):
+		BOARD_SIZE = value
+		size = value
+
+@export var CELL_SIZE: Vector2 :
+	get:
+		return get_effective_cell_size()
 
 signal game_completed
 signal game_won(match_)
 signal game_tied
-
-func get_board():
-	return _board
 
 func generate_empty_board():
 	var new_board = []
@@ -31,7 +32,7 @@ func generate_empty_board():
 	for y in range(ROWS):
 		new_board.append([])
 		for x in range(COLS):
-			new_board[y].append(TYPES.EMPTY)
+			new_board[y].append(Piece.Types.EMPTY)
 	return new_board
 
 func empty_board():
@@ -42,29 +43,55 @@ func empty_board():
 
 	_pieces = []
 
-func is_valid_cell(cell:Vector2) -> bool:
-	return  cell.x >= 0 and cell.x < COLS and cell.y >= 0 and cell.y < ROWS
+func is_within_bounds(cell:Vector2) -> bool:
+	return cell.x >= 0 and cell.x < COLS and cell.y >= 0 and cell.y < ROWS
 
 func set_cell_type(cell:Vector2, type:int):
-	if is_valid_cell(cell):
+	if is_within_bounds(cell):
 		_board[cell.y][cell.x] = type
 
-		var piece = Piece.new(type, CELL_SIZE * cell + CELL_SIZE/2 + SPACING)
+		var piece = Piece.new(type, get_effective_cell_position(cell) + CELL_SIZE/2)
+
 		_pieces.append(piece)
 		add_child(piece)
 
-func get_cell_type(cell:Vector2) -> int:
-	if is_valid_cell(cell):
-		return _board[cell.y][cell.x]
-	return TYPES.NULL
+func get_effective_cell_size() -> Vector2:
+	var effective_board_size: = BOARD_SIZE - (Vector2.ONE * border_width_outer * 2)
 
-class Match:
+	effective_board_size.x -= border_width_inner * (COLS - 1)
+	effective_board_size.y -= border_width_inner * (ROWS - 1)
+
+	return effective_board_size / Vector2(COLS, ROWS)
+
+func get_effective_cell_position(cell: Vector2) -> Vector2:
+	var effective_cell_size: = get_effective_cell_size()
+	var border_size_outer: = Vector2.ONE * border_width_outer / 2
+	var effective_cell_position: = border_size_outer
+
+	effective_cell_position.x += (effective_cell_size.x + border_width_inner) * cell.x
+	effective_cell_position.y += (effective_cell_size.y + border_width_inner) * cell.y
+
+	if cell.x == COLS:
+		effective_cell_position.x += border_size_outer.x
+
+	if cell.y == ROWS:
+		effective_cell_position.y += border_size_outer.y
+
+	return effective_cell_position
+
+func get_cell_type(cell:Vector2) -> int:
+	if is_within_bounds(cell):
+		return _board[cell.y][cell.x]
+	return Piece.Types.NULL
+
+class Match extends RefCounted:
 	var start: Vector2
 	var end: Vector2
 	var direction: Vector2
 	var type: int
 
-	func _init(type:int, start:Vector2, end:Vector2, direction:Vector2):
+	@warning_ignore("shadowed_variable")
+	func _init(type: int, start: Vector2, end: Vector2, direction: Vector2):
 		self.type = type
 		self.start = start
 		self.end = end
@@ -72,33 +99,35 @@ class Match:
 
 	# DEBGGING HELPER
 	func _to_string():
-		return "%s %s -> %s" % ["X" if type == Piece.TYPES.X else "O", start, end]
+		return "%s %s -> %s" % ["X" if type == Piece.Types.X else "O", start, end]
 
 func check():
 	var empty_count = 0
 	for y in COLS:
 		for x in ROWS:
 			var cell = Vector2(x, y)
-			empty_count += 1 if get_cell_type(cell) == TYPES.EMPTY else 0
+
+			if not get_cell_type(cell):
+				empty_count += 1
 
 			var matches = [
-				check_type_on_board(cell, TYPES.X),
-				check_type_on_board(cell, TYPES.O)]
+				check_type_on_board(cell, Piece.Types.X),
+				check_type_on_board(cell, Piece.Types.O)]
 
 			for match_ in matches:
 				if match_:
-					emit_signal("game_completed")
-					emit_signal("game_won", match_)
+					game_completed.emit()
+					game_won.emit(match_)
 					return
 
 	if empty_count == 0:
-		emit_signal("game_completed")
-		emit_signal("game_tied")
+		game_completed.emit()
+		game_tied.emit()
 
 # returns true if a win condition for a type at a cell is found on the board
-func check_type_on_board(cell:Vector2, type:int) -> Match:
-	if not is_valid_cell(cell) or not get_cell_type(cell) == type:
-		return null
+func check_type_on_board(cell: Vector2, type: int) -> Match:
+	if not is_within_bounds(cell) or not get_cell_type(cell) == type:
+		return
 
 	var directions = [
 		Vector2.RIGHT, Vector2.DOWN,
@@ -111,21 +140,26 @@ func check_type_on_board(cell:Vector2, type:int) -> Match:
 		if check_type_in_direction(cell, direction, type):
 			return Match.new(type, cell, cell + direction * (get_parent().WIN_CONDITION-1), direction)
 
-	return null
+	return
 
 # returns true if a win condition is met in the direction given on the board
-func check_type_in_direction(cell:Vector2, direction:Vector2, type:int, streak:=1) -> bool:
+func check_type_in_direction(cell: Vector2, direction: Vector2, type: int, streak: = 1) -> bool:
 	if streak == get_parent().WIN_CONDITION:
 		return true
-	if not is_valid_cell(cell):
+
+	if not is_within_bounds(cell):
 		return false
 
 	if get_cell_type(cell + direction) == type:
 		return check_type_in_direction(cell + direction, direction, type, streak+1)
+
 	return false
 
 func _ready():
 	_board = generate_empty_board()
+
+func _process(_delta: float) -> void:
+	queue_redraw()
 
 func _draw():
 	var points = [Vector2(), Vector2.RIGHT * BOARD_SIZE, BOARD_SIZE, Vector2.DOWN * BOARD_SIZE, Vector2()]
@@ -133,13 +167,20 @@ func _draw():
 	var border_color: = theme.get_color("border", "Board")
 	var background_color: = theme.get_color("background", "Board")
 
+	# fill and outer border
 	draw_rect(Rect2(points[0], points[2]), background_color, true)
+	draw_polyline(points, border_color, border_width_outer)
 
-	for n in (points.size()-1):
-		draw_line(points[n], points[n+1], border_color, 4)
+	# inner horizontal border lines
+	for y in range(1, ROWS):
+		var start: = get_effective_cell_position(Vector2(0, y))
+		var end: = get_effective_cell_position(Vector2(COLS, y))
 
-	draw_line(Vector2.RIGHT * CELL_SIZE, Vector2(CELL_SIZE.x, BOARD_SIZE.y), border_color, 2)
-	draw_line(Vector2.RIGHT * CELL_SIZE * 2, Vector2(CELL_SIZE.x*2, BOARD_SIZE.y), border_color, 2)
+		draw_line(start, end, border_color, border_width_inner)
 
-	draw_line(Vector2.DOWN * CELL_SIZE, Vector2(BOARD_SIZE.x, CELL_SIZE.y), border_color, 2)
-	draw_line(Vector2.DOWN * CELL_SIZE * 2, Vector2(BOARD_SIZE.x, CELL_SIZE.y*2), border_color, 2)
+	# inner vertical border lines
+	for x in range(1, COLS):
+		var start: = get_effective_cell_position(Vector2(x, 0))
+		var end: = get_effective_cell_position(Vector2(x, ROWS))
+
+		draw_line(start, end, border_color, border_width_inner)
