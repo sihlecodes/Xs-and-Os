@@ -1,0 +1,67 @@
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://dauqppu1iyvav"]
+
+[ext_resource type="FontFile" uid="uid://brc816gdl87af" path="res://fonts/Roboto-Bold.ttf" id="1"]
+
+[sub_resource type="FontFile" id="1"]
+fallbacks = Array[Font]([ExtResource("1")])
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+cache/0/16/0/kerning_overrides/16/0 = Vector2(0, 0)
+
+[sub_resource type="StyleBoxFlat" id="2"]
+bg_color = Color(0.176471, 0.184314, 0.231373, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.392157, 0.34902, 0.952941, 1)
+border_blend = true
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="3"]
+content_margin_left = 15.0
+content_margin_top = 10.0
+content_margin_right = 15.0
+content_margin_bottom = 10.0
+bg_color = Color(0.176471, 0.184314, 0.231373, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="4"]
+bg_color = Color(0.392157, 0.34902, 0.952941, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[resource]
+Board/colors/background = Color(1, 1, 1, 1)
+Board/colors/border = Color(0.176471, 0.184314, 0.231373, 1)
+Button/colors/font_color = Color(0.88, 0.88, 0.88, 1)
+Button/colors/font_color_disabled = Color(0.9, 0.9, 0.9, 0.2)
+Button/colors/font_color_hover = Color(0.94, 0.94, 0.94, 1)
+Button/colors/font_color_pressed = Color(1, 1, 1, 1)
+Button/constants/hseparation = 2
+Button/fonts/font = SubResource("1")
+Button/styles/disabled = null
+Button/styles/focus = SubResource("2")
+Button/styles/hover = null
+Button/styles/normal = SubResource("3")
+Button/styles/pressed = SubResource("4")
+O/colors/stroke = Color(0.392157, 0.34902, 0.952941, 1)
+O/constants/diameter = 84
+O/constants/stroke_width = 10
+Strike/colors/stroke = Color(0.392157, 0.854902, 0.843137, 1)
+Strike/constants/stroke_width = 8
+X/colors/stroke = Color(1, 0.301961, 0.301961, 1)
+X/constants/height = 64
+X/constants/stroke_width = 8
+X/constants/width = 64
