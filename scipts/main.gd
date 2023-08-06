@@ -1,31 +1,16 @@
 extends Node
 
-class_name Game
-
-@export var theme: Theme
-
-var turn: = 0
-var game_completed: = false
-
-@export var WIN_CONDITION = 3
-
-func restart():
-	game_completed = false
-	turn = 0
-	%Board.empty_board()
-	%Strike.reset()
-
-	show_text("X's turn.")
-	show_hint("Click on any cell on the board.")
-
 func show_hint(text: String):
 	%hint.text = text
 
 func show_text(text: String):
 	%display.text = text
 
+func _on_restart_pressed() -> void:
+	%Game.restart.rpc()
+
 func _on_game_completed():
-	game_completed = true
+	%Game.game_completed = true
 	show_hint("Press RESTART.")
 
 func _on_game_tied():
@@ -44,15 +29,20 @@ func _on_game_won(_match: Board.Match):
 
 func _input(event: InputEvent):
 	if event is InputEventKey:
-		if event.keycode == KEY_SPACE and event.is_pressed() and game_completed:
-			restart()
+		if event.keycode == KEY_SPACE and event.is_pressed() and %Game.game_completed:
+			%Game.restart.rpc()
 
 	# ignore any further input processing if someone has won
-	if game_completed:
+	if %Game.game_completed:
 		return
 
 	# only take mouse inputs if the cursor is inside the board's area
 	if event is InputEventMouse or event is InputEventScreenTouch:
+		var current_type: int = %Game.turn % 2 + Piece.Types.X
+
+		if not (%Game.player.type & current_type):
+			return
+
 		if (event.position.x >= %Board.position.x and
 			event.position.x <= (%Board.position.x + %Board.BOARD_SIZE.x) and
 			event.position.y >= %Board.position.y and
@@ -62,12 +52,9 @@ func _input(event: InputEvent):
 				var cell = ((event.position - %Board.position)/(%Board.CELL_SIZE)).floor()
 
 				if not %Board.get_cell_type(cell):
-					%Board.set_cell_type(cell, turn % 2 + Piece.Types.X)
+					%Board.set_cell_type.rpc(cell, current_type)
 
-					turn += 1
+					%Game.advance_turn.rpc()
 
-					show_text(("O" if turn % 2 else "X") + "'s turn.")
+					show_text(("O" if %Game.turn % 2 else "X") + "'s turn.")
 					%Board.check()
-
-func _ready():
-	restart()

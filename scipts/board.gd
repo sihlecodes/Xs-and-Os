@@ -46,6 +46,7 @@ func empty_board():
 func is_within_bounds(cell:Vector2) -> bool:
 	return cell.x >= 0 and cell.x < COLS and cell.y >= 0 and cell.y < ROWS
 
+@rpc("any_peer", "call_local")
 func set_cell_type(cell:Vector2, type:int):
 	if is_within_bounds(cell):
 		_board[cell.y][cell.x] = type
@@ -138,13 +139,13 @@ func check_type_on_board(cell: Vector2, type: int) -> Match:
 
 	for direction in directions:
 		if check_type_in_direction(cell, direction, type):
-			return Match.new(type, cell, cell + direction * (get_parent().WIN_CONDITION-1), direction)
+			return Match.new(type, cell, cell + direction * (%Game.WIN_CONDITION-1), direction)
 
 	return
 
 # returns true if a win condition is met in the direction given on the board
 func check_type_in_direction(cell: Vector2, direction: Vector2, type: int, streak: = 1) -> bool:
-	if streak == get_parent().WIN_CONDITION:
+	if streak == %Game.WIN_CONDITION:
 		return true
 
 	if not is_within_bounds(cell):

@@ -1,7 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://df1rucy3g6c40"]
+[gd_scene load_steps=10 format=3 uid="uid://df1rucy3g6c40"]
 
 [ext_resource type="Script" path="res://scipts/board.gd" id="1"]
+[ext_resource type="Script" path="res://scipts/game.gd" id="1_yweq4"]
 [ext_resource type="FontFile" uid="uid://brc816gdl87af" path="res://fonts/Roboto-Bold.ttf" id="2"]
+[ext_resource type="Script" path="res://Networking.gd" id="3_2xqbt"]
 [ext_resource type="Script" path="res://scipts/main.gd" id="4"]
 [ext_resource type="Script" path="res://scipts/strike.gd" id="5"]
 [ext_resource type="Theme" uid="uid://dauqppu1iyvav" path="res://theme.tres" id="6"]
@@ -23,9 +25,16 @@ cache/0/16/0/underline_thickness = 0.0
 cache/0/16/0/scale = 1.0
 cache/0/16/0/kerning_overrides/16/0 = Vector2(0, 0)
 
-[node name="Game" type="Node"]
+[node name="Main" type="Node"]
 script = ExtResource("4")
-theme = ExtResource("6")
+
+[node name="Networking" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("3_2xqbt")
+
+[node name="Game" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("1_yweq4")
 
 [node name="labels" type="VBoxContainer" parent="."]
 anchors_preset = 5
@@ -74,9 +83,9 @@ grow_vertical = 2
 theme = ExtResource("6")
 script = ExtResource("1")
 BOARD_SIZE = Vector2(400, 400)
-CELL_SIZE = Vector2(137.333, 137.333)
+CELL_SIZE = Vector2(129.333, 129.333)
 
-[node name="button" type="Button" parent="."]
+[node name="restart" type="Button" parent="."]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -102,4 +111,4 @@ overshoot = 15
 [connection signal="game_completed" from="Board" to="." method="_on_game_completed"]
 [connection signal="game_tied" from="Board" to="." method="_on_game_tied"]
 [connection signal="game_won" from="Board" to="." method="_on_game_won"]
-[connection signal="pressed" from="button" to="." method="restart"]
+[connection signal="pressed" from="restart" to="." method="_on_restart_pressed"]
