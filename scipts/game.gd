@@ -6,6 +6,7 @@ var turn: = 0
 var game_completed: = false
 
 var player: = Player.new()
+#var session: = Session.new()
 
 @export var WIN_CONDITION = 3
 
@@ -64,7 +65,6 @@ func _input(event: InputEvent):
 	# ignore any further input processing if someone has won
 	if game_completed:
 		return
-
 
 	# only take mouse inputs if the cursor is inside the board's area
 	if event is InputEventMouse or event is InputEventScreenTouch:

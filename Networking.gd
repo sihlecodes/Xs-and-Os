@@ -2,6 +2,7 @@ extends Node
 
 const PORT = 9810
 var players: = []
+var sessions: = []
 
 func _enter_tree() -> void:
 	multiplayer.connection_failed.connect(_on_connection_failed)
@@ -16,7 +17,7 @@ func start_networking(is_server: bool):
 	var peer = ENetMultiplayerPeer.new()
 
 	if is_server:
-		var error = peer.create_server(PORT, 2)
+		var error = peer.create_server(PORT)
 
 		multiplayer.peer_connected.connect(_on_player_connected)
 		multiplayer.peer_disconnected.connect(_on_player_disconnected)
@@ -40,7 +41,7 @@ func _on_player_connected(id: int):
 	players.append(id)
 	print("Player ", id, " has connected.")
 
-	if players.size() == 2:
+	if players.size() >= 2:
 		%Game.start_game()
 
 func _on_player_disconnected(id: int):
