@@ -26,35 +26,3 @@ func _on_game_won(_match: Board.Match):
 			show_text("X won the game!")
 		Piece.Types.O:
 			show_text("O won the game!")
-
-func _input(event: InputEvent):
-	if event is InputEventKey:
-		if event.keycode == KEY_SPACE and event.is_pressed() and %Game.game_completed:
-			%Game.restart.rpc()
-
-	# ignore any further input processing if someone has won
-	if %Game.game_completed:
-		return
-
-	# only take mouse inputs if the cursor is inside the board's area
-	if event is InputEventMouse or event is InputEventScreenTouch:
-		var current_type: int = %Game.turn % 2 + Piece.Types.X
-
-		if not (%Game.player.type & current_type):
-			return
-
-		if (event.position.x >= %Board.position.x and
-			event.position.x <= (%Board.position.x + %Board.BOARD_SIZE.x) and
-			event.position.y >= %Board.position.y and
-			event.position.y <= (%Board.position.y + %Board.BOARD_SIZE.y)):
-
-			if event is InputEventMouseButton and event.is_pressed():
-				var cell = ((event.position - %Board.position)/(%Board.CELL_SIZE)).floor()
-
-				if not %Board.get_cell_type(cell):
-					%Board.set_cell_type.rpc(cell, current_type)
-
-					%Game.advance_turn.rpc()
-
-					show_text(("O" if %Game.turn % 2 else "X") + "'s turn.")
-					%Board.check()
