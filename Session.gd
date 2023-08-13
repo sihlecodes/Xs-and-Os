@@ -1,19 +1,24 @@
 extends RefCounted
 
-var players: Array[Player]
+class_name Session
 
-var turns: int = 0
+var player_ids: Array[int]
+
+var turn: int = 0
 var channel: int
 
 const MAX_PLAYERS: int = 2
 
-func add_player(player: Player):
-	if players.size() < MAX_PLAYERS:
-		players.append(player)
+func add_player_id(player_id: int):
+	if player_ids.size() < MAX_PLAYERS:
+		player_ids.append(player_id)
+
+func has_player_id(player_id: int):
+	return player_ids.has(player_id)
 
 func start():
 	pass
 
 func rpc(callable: Callable,  args: Array):
-	for player in players:
-		callable.rpc_id(player.id, args)
+	for player_id in player_ids:
+		callable.rpc_id(player_id, args)

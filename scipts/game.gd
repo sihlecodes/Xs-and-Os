@@ -5,25 +5,28 @@ extends Node
 var turn: = 0
 var game_completed: = false
 
-var player: = Player.new()
-#var session: = Session.new()
+var player_type: int
 
 @export var WIN_CONDITION = 3
 
 @onready var main: = get_parent()
 
-func start_game():
+func start_game(session: Session):
 	var types: = [ Piece.Types.X, Piece.Types.O ]
 	print("game starting")
 
-	for player_id in %Networking.players:
+	for player_id in session.player_ids:
 		var type: int = types.pop_at(randi() % types.size())
 
 		set_player_type.rpc_id(player_id, type)
 
 @rpc("any_peer")
+func set_turn(_turn: int):
+	%Game.turn = _turn
+
+@rpc("any_peer")
 func set_player_type(type: int):
-	player.type = type
+	player_type = type
 
 @rpc("any_peer")
 func restart():
@@ -34,10 +37,6 @@ func restart():
 
 	main.show_text("X's turn.")
 	main.show_hint("Click on any cell on the board.")
-
-@rpc("any_peer")
-func advance_turn():
-	turn += 1
 
 func _on_game_completed():
 	game_completed = true
@@ -67,10 +66,12 @@ func _input(event: InputEvent):
 		return
 
 	# only take mouse inputs if the cursor is inside the board's area
-	if event is InputEventMouse or event is InputEventScreenTouch:
-		var current_type: = turn % 2 + Piece.Types.X
+	if event is InputEventMouseButton or event is InputEventScreenTouch:
+		%Networking.poll_turn.rpc_id(1)
 
-		if not (player.type & current_type):
+		var current_type: = turn % 2 + (Piece.Types.X - 1)
+
+		if player_type != current_type:
 			return
 
 		if (event.position.x >= %Board.position.x and
@@ -84,11 +85,11 @@ func _input(event: InputEvent):
 
 				if not %Board.get_cell_type(cell):
 					%Board.set_cell_type.rpc(cell, current_type)
+					%Board.check()
 
-					turn += 1
+					%Networking.request_turn_advance.rpc_id(1)
 
 					main.show_text(("O" if turn % 2 else "X") + "'s turn.")
-					%Board.check()
 
 func _ready():
 	restart()
