@@ -11,6 +11,8 @@ var player_type: int
 
 @onready var main: = get_parent()
 
+signal turn_changed
+
 func start_game(session: Session):
 	var types: = [ Piece.Types.X, Piece.Types.O ]
 	print("game starting")
@@ -23,6 +25,7 @@ func start_game(session: Session):
 @rpc("any_peer")
 func set_turn(_turn: int):
 	%Game.turn = _turn
+	turn_changed.emit()
 
 @rpc("any_peer")
 func set_player_type(type: int):
@@ -69,7 +72,9 @@ func _input(event: InputEvent):
 	if event is InputEventMouseButton or event is InputEventScreenTouch:
 		%Networking.poll_turn.rpc_id(1)
 
-		var current_type: = turn % 2 + (Piece.Types.X - 1)
+		await turn_changed
+
+		var current_type: = turn % 2 + Piece.Types.X
 
 		if player_type != current_type:
 			return
@@ -82,13 +87,13 @@ func _input(event: InputEvent):
 			if event is InputEventMouseButton and event.is_pressed():
 				var cell = ((event.position - %Board.position)/(%Board.CELL_SIZE)).floor()
 
-
 				if not %Board.get_cell_type(cell):
 					%Board.set_cell_type.rpc(cell, current_type)
 					%Board.check()
 
 					%Networking.request_turn_advance.rpc_id(1)
 
+					# TODO: Sync text over server
 					main.show_text(("O" if turn % 2 else "X") + "'s turn.")
 
 func _ready():

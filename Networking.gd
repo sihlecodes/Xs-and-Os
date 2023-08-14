@@ -43,7 +43,7 @@ func poll_turn():
 
 	# TODO: make players known session ids instead of getting sessions using player ids
 	var session: Session = get_player_session(player_id)
-	%Game.set_turn.rpc_id(player_id, session.turns)
+	%Game.set_turn.rpc_id(player_id, session.turn)
 
 @rpc("any_peer")
 func request_turn_advance():
@@ -51,6 +51,7 @@ func request_turn_advance():
 	var session: Session = get_player_session(player_id)
 	# TODO: increase security by adding a handshake protocol
 	session.turn += 1
+	print(session)
 
 func _on_connection_success():
 	print("Connection was successful")
@@ -64,8 +65,15 @@ func _on_player_connected(player_id: int):
 
 	if players.size() >= 2:
 		# TODO: Add players to the session
-		%Game.start_game(Session.new())
+		var session: = Session.new()
+
+		session.add_player_id(players.pop_front())
+		session.add_player_id(players.pop_front())
+
+		%Game.start_game(session)
+
+		sessions.append(session)
 
 func _on_player_disconnected(player_id: int):
-	players.erase(player_id)
+	# TODO: Implement some logic to delete sessions
 	print("Player ", player_id, " disconnected.")

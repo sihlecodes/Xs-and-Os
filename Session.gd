@@ -22,3 +22,6 @@ func start():
 func rpc(callable: Callable,  args: Array):
 	for player_id in player_ids:
 		callable.rpc_id(player_id, args)
+
+func _to_string() -> String:
+	return "Session(%s, %s, %s)" % ([turn] + player_ids)
