@@ -31,7 +31,9 @@ func start_networking(is_server: bool):
 
 	multiplayer.set_multiplayer_peer(peer)
 
-func get_player_session(player_id: int) -> Session:
+func get_player_session() -> Session:
+	var player_id: = multiplayer.get_remote_sender_id()
+
 	for session in sessions:
 		if session.has_player_id(player_id):
 			return session
@@ -40,15 +42,31 @@ func get_player_session(player_id: int) -> Session:
 @rpc("any_peer")
 func poll_turn():
 	var player_id: = multiplayer.get_remote_sender_id()
+	var session: Session = get_player_session()
 
 	# TODO: make players known session ids instead of getting sessions using player ids
-	var session: Session = get_player_session(player_id)
 	%Game.set_turn.rpc_id(player_id, session.turn)
 
 @rpc("any_peer")
+func request_set_cell_type(cell: Vector2, player_type: int):
+#	var player_id: = multiplayer.get_remote_sender_id()
+	var session: Session = get_player_session()
+
+	session.rpc(%Board.set_cell_type, cell, player_type)
+#	for id in session.player_ids:
+#		%Board.set_cell_type.rpc_id(id, cell, player_type)
+
+@rpc("any_peer")
+func request_check():
+	var session: Session = get_player_session()
+
+	print("check")
+	session.rpc(%Board.check)
+
+@rpc("any_peer")
 func request_turn_advance():
-	var player_id: = multiplayer.get_remote_sender_id()
-	var session: Session = get_player_session(player_id)
+#	var player_id: = multiplayer.get_remote_sender_id()
+	var session: Session = get_player_session()
 	# TODO: increase security by adding a handshake protocol
 	session.turn += 1
 	print(session)

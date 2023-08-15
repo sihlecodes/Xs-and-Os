@@ -26,6 +26,8 @@ signal game_completed
 signal game_won(match_)
 signal game_tied
 
+signal cell_type_changed
+
 func generate_empty_board():
 	var new_board = []
 
@@ -48,13 +50,17 @@ func is_within_bounds(cell:Vector2) -> bool:
 
 @rpc("any_peer", "call_local")
 func set_cell_type(cell:Vector2, type:int):
-	if is_within_bounds(cell):
-		_board[cell.y][cell.x] = type
+	if not is_within_bounds(cell):
+		return
 
-		var piece = Piece.new(type, get_effective_cell_position(cell) + CELL_SIZE/2)
+	_board[cell.y][cell.x] = type
 
-		_pieces.append(piece)
-		add_child(piece)
+	var piece = Piece.new(type, get_effective_cell_position(cell) + CELL_SIZE/2)
+
+	_pieces.append(piece)
+	add_child(piece)
+
+	cell_type_changed.emit()
 
 func get_effective_cell_size() -> Vector2:
 	var effective_board_size: = BOARD_SIZE - (Vector2.ONE * border_width_outer * 2)

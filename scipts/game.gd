@@ -88,9 +88,11 @@ func _input(event: InputEvent):
 				var cell = ((event.position - %Board.position)/(%Board.CELL_SIZE)).floor()
 
 				if not %Board.get_cell_type(cell):
-					%Board.set_cell_type.rpc(cell, current_type)
-					%Board.check()
+					%Networking.request_set_cell_type.rpc_id(1, cell, player_type)
 
+					await %Board.cell_type_changed
+
+					%Networking.request_check.rpc_id(1)
 					%Networking.request_turn_advance.rpc_id(1)
 
 					# TODO: Sync text over server

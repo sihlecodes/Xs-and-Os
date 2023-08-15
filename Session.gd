@@ -19,9 +19,16 @@ func has_player_id(player_id: int):
 func start():
 	pass
 
-func rpc(callable: Callable,  args: Array):
+func rpc(callable: Callable, arg1=null, arg2=null):
+	# TODO: Fix errors / hackiness
+
 	for player_id in player_ids:
-		callable.rpc_id(player_id, args)
+		if arg1 == null:
+			callable.rpc_id(player_id)
+		elif arg2 == null:
+			callable.rpc_id(player_id, arg1)
+		else:
+			callable.rpc_id(player_id, arg1, arg2)
 
 func _to_string() -> String:
 	return "Session(%s, %s, %s)" % ([turn] + player_ids)
