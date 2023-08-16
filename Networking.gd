@@ -40,7 +40,7 @@ func get_player_session() -> Session:
 	return
 
 @rpc("any_peer")
-func poll_turn():
+func request_turn():
 	var player_id: = multiplayer.get_remote_sender_id()
 	var session: Session = get_player_session()
 
@@ -88,7 +88,7 @@ func _on_player_connected(player_id: int):
 		session.add_player_id(players.pop_front())
 		session.add_player_id(players.pop_front())
 
-		%Game.start_game(session)
+		%Game.start(session)
 
 		sessions.append(session)
 

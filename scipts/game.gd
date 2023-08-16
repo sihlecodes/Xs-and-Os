@@ -13,9 +13,8 @@ var player_type: int
 
 signal turn_changed
 
-func start_game(session: Session):
+func start(session: Session):
 	var types: = [ Piece.Types.X, Piece.Types.O ]
-	print("game starting")
 
 	for player_id in session.player_ids:
 		var type: int = types.pop_at(randi() % types.size())
@@ -34,7 +33,6 @@ func set_player_type(type: int):
 @rpc("any_peer")
 func restart():
 	game_completed = false
-	turn = 0
 	%Board.empty_board()
 	%Strike.reset()
 
@@ -70,7 +68,7 @@ func _input(event: InputEvent):
 
 	# only take mouse inputs if the cursor is inside the board's area
 	if event is InputEventMouseButton or event is InputEventScreenTouch:
-		%Networking.poll_turn.rpc_id(1)
+		%Networking.request_turn.rpc_id(1)
 
 		await turn_changed
 
