@@ -64,6 +64,13 @@ func request_check():
 	session.rpc(%Board.check)
 
 @rpc("any_peer")
+func request_restart():
+	var session: Session = get_player_session()
+	# TODO: add handshake protocol
+	session.turn = 0
+	session.rpc(%Game.restart)
+
+@rpc("any_peer")
 func request_turn_advance():
 #	var player_id: = multiplayer.get_remote_sender_id()
 	var session: Session = get_player_session()

@@ -7,7 +7,7 @@ func show_text(text: String):
 	%display.text = text
 
 func _on_restart_pressed() -> void:
-	%Game.restart.rpc()
+	%Networking.request_restart.rpc_id(1)
 
 func _on_game_completed():
 	%Game.game_completed = true

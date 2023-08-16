@@ -60,7 +60,7 @@ func _on_game_won(_match: Board.Match):
 func _input(event: InputEvent):
 	if event is InputEventKey:
 		if event.keycode == KEY_SPACE and event.is_pressed() and game_completed:
-			restart.rpc()
+			main._on_restart_pressed()
 
 	# ignore any further input processing if someone has won
 	if game_completed:
@@ -98,6 +98,3 @@ func _input(event: InputEvent):
 
 func _ready():
 	restart()
-
-func _on_restart_pressed() -> void:
-	restart.rpc()
