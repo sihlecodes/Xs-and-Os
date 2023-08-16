@@ -48,7 +48,7 @@ func empty_board():
 func is_within_bounds(cell:Vector2) -> bool:
 	return cell.x >= 0 and cell.x < COLS and cell.y >= 0 and cell.y < ROWS
 
-@rpc("any_peer", "call_local")
+@rpc("any_peer")
 func set_cell_type(cell:Vector2, type:int):
 	if not is_within_bounds(cell):
 		return
@@ -108,6 +108,7 @@ class Match extends RefCounted:
 	func _to_string():
 		return "%s %s -> %s" % ["X" if type == Piece.Types.X else "O", start, end]
 
+@rpc("any_peer")
 func check():
 	var empty_count = 0
 	for y in COLS:

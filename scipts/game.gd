@@ -93,8 +93,8 @@ func _input(event: InputEvent):
 					%Networking.request_check.rpc_id(1)
 					%Networking.request_turn_advance.rpc_id(1)
 
-					# TODO: Sync text over server
-					main.show_text(("O" if turn % 2 else "X") + "'s turn.")
+					var message: = ("O" if turn % 2 else "X") + "'s turn."
+					%Networking.request_show_text.rpc_id(1, message)
 
 func _ready():
 	restart()

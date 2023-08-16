@@ -49,18 +49,19 @@ func request_turn():
 
 @rpc("any_peer")
 func request_set_cell_type(cell: Vector2, player_type: int):
-#	var player_id: = multiplayer.get_remote_sender_id()
 	var session: Session = get_player_session()
-
 	session.rpc(%Board.set_cell_type, cell, player_type)
-#	for id in session.player_ids:
-#		%Board.set_cell_type.rpc_id(id, cell, player_type)
+
+@rpc("any_peer")
+func request_show_text(message: String):
+	var session: Session = get_player_session()
+	var main: = get_parent()
+
+	session.rpc(main.show_text, message)
 
 @rpc("any_peer")
 func request_check():
 	var session: Session = get_player_session()
-
-	print("check")
 	session.rpc(%Board.check)
 
 @rpc("any_peer")
@@ -72,9 +73,7 @@ func request_restart():
 
 @rpc("any_peer")
 func request_turn_advance():
-#	var player_id: = multiplayer.get_remote_sender_id()
 	var session: Session = get_player_session()
-	# TODO: increase security by adding a handshake protocol
 	session.turn += 1
 	print(session)
 

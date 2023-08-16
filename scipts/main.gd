@@ -1,8 +1,10 @@
 extends Node
 
+@rpc
 func show_hint(text: String):
 	%hint.text = text
 
+@rpc
 func show_text(text: String):
 	%display.text = text
 
