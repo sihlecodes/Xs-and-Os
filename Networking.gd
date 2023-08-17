@@ -88,7 +88,6 @@ func _on_player_connected(player_id: int):
 	print("Player ", player_id, " has connected.")
 
 	if players.size() >= 2:
-		# TODO: Add players to the session
 		var session: = Session.new()
 
 		session.add_player_id(players.pop_front())

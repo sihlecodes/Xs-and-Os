@@ -39,24 +39,6 @@ func restart():
 	main.show_text("X's turn.")
 	main.show_hint("Click on any cell on the board.")
 
-func _on_game_completed():
-	game_completed = true
-	main.show_hint("Press RESTART.")
-
-func _on_game_tied():
-	main.show_text("Game tied. :C")
-
-func _on_game_won(_match: Board.Match):
-	%Strike.animate(
-		%Board.position + %Board.get_effective_cell_position(_match.start) + %Board.CELL_SIZE/2,
-		%Board.position + %Board.get_effective_cell_position(_match.end) + %Board.CELL_SIZE/2)
-
-	match _match.type:
-		Piece.Types.X:
-			main.show_text("X won the game!")
-		Piece.Types.O:
-			main.show_text("O won the game!")
-
 func _input(event: InputEvent):
 	if event is InputEventKey:
 		if event.keycode == KEY_SPACE and event.is_pressed() and game_completed:
