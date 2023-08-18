@@ -6,25 +6,25 @@ func _enter_tree() -> void:
 	multiplayer.connection_failed.connect($Client._on_connection_failed)
 	multiplayer.connected_to_server.connect($Client._on_connection_success)
 
+	var peer: = ENetMultiplayerPeer.new()
+
 	if "--server" in OS.get_cmdline_args():
-		start_networking(true)
+		create_server(peer)
 	else:
-		start_networking(false)
+		create_client(peer)
 
-func start_networking(is_server: bool):
-	var peer = ENetMultiplayerPeer.new()
+	multiplayer.multiplayer_peer = peer
 
-	if is_server:
-		var error = peer.create_server(PORT)
+func create_server(peer: ENetMultiplayerPeer):
+	var error = peer.create_server(PORT)
 
-		multiplayer.peer_connected.connect($Server._on_player_connected)
-		multiplayer.peer_disconnected.connect($Server._on_player_disconnected)
+	multiplayer.peer_connected.connect(%Server._on_player_connected)
+	multiplayer.peer_disconnected.connect(%Server._on_player_disconnected)
 
-		if error != OK:
-			print("Error running the server...")
-		else:
-			print("Server is running at port ", PORT)
+	if error != OK:
+		print("Error running the server...")
 	else:
-		peer.create_client("localhost", PORT)
+		print("Server is running at port ", PORT)
 
-	multiplayer.set_multiplayer_peer(peer)
+func create_client(peer: ENetMultiplayerPeer):
+	peer.create_client("localhost", PORT)
