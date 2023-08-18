@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scipts/board.gd" id="1"]
 [ext_resource type="Script" path="res://scipts/game.gd" id="1_yweq4"]
 [ext_resource type="FontFile" uid="uid://brc816gdl87af" path="res://fonts/Roboto-Bold.ttf" id="2"]
-[ext_resource type="Script" path="res://scipts/Networking.gd" id="2_y5n4c"]
+[ext_resource type="Script" path="res://scipts/networking/Networking.gd" id="2_6dxgx"]
 [ext_resource type="Script" path="res://scipts/networking/Server.gd" id="3_xgba2"]
 [ext_resource type="Script" path="res://scipts/main.gd" id="4"]
 [ext_resource type="Script" path="res://scipts/networking/Client.gd" id="4_jies1"]
@@ -32,7 +32,7 @@ script = ExtResource("4")
 
 [node name="Networking" type="Node" parent="."]
 unique_name_in_owner = true
-script = ExtResource("2_y5n4c")
+script = ExtResource("2_6dxgx")
 
 [node name="Server" type="Node" parent="Networking"]
 unique_name_in_owner = true
