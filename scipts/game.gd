@@ -1,36 +1,21 @@
 extends Node
 
+class_name Game
+
 @export var theme: Theme
+@export var WIN_CONDITION = 3
 
 var turn: = 0
 var game_completed: = false
-
-var player_type: int
-
-@export var WIN_CONDITION = 3
 
 @onready var main: = get_parent()
 
 signal turn_changed
 
-func start(session: Session):
-	var types: = [ Piece.Types.X, Piece.Types.O ]
-
-	for player_id in session.player_ids:
-		var type: int = types.pop_at(randi() % types.size())
-
-		set_player_type.rpc_id(player_id, type)
-
-@rpc("any_peer")
 func set_turn(_turn: int):
-	%Game.turn = _turn
+	turn = _turn
 	turn_changed.emit()
 
-@rpc("any_peer")
-func set_player_type(type: int):
-	player_type = type
-
-@rpc("any_peer")
 func restart():
 	game_completed = false
 	%Board.empty_board()
@@ -50,13 +35,13 @@ func _input(event: InputEvent):
 
 	# only take mouse inputs if the cursor is inside the board's area
 	if event is InputEventMouseButton or event is InputEventScreenTouch:
-		%Networking.request_turn.rpc_id(1)
+		%Server.request_turn.rpc_id(1)
 
 		await turn_changed
 
 		var current_type: = turn % 2 + Piece.Types.X
 
-		if player_type != current_type:
+		if %Client.player_type != current_type:
 			return
 
 		if (event.position.x >= %Board.position.x and
@@ -68,15 +53,15 @@ func _input(event: InputEvent):
 				var cell = ((event.position - %Board.position)/(%Board.CELL_SIZE)).floor()
 
 				if not %Board.get_cell_type(cell):
-					%Networking.request_set_cell_type.rpc_id(1, cell, player_type)
+					%Server.request_set_cell_type.rpc_id(1, cell, %Client.player_type)
 
 					await %Board.cell_type_changed
 
-					%Networking.request_check.rpc_id(1)
-					%Networking.request_turn_advance.rpc_id(1)
+					%Server.request_check.rpc_id(1)
+					%Server.request_turn_advance.rpc_id(1)
 
 					var message: = ("O" if turn % 2 else "X") + "'s turn."
-					%Networking.request_show_text.rpc_id(1, message)
+					%Server.request_show_text.rpc_id(1, message)
 
 func _ready():
 	restart()

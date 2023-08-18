@@ -48,7 +48,6 @@ func empty_board():
 func is_within_bounds(cell:Vector2) -> bool:
 	return cell.x >= 0 and cell.x < COLS and cell.y >= 0 and cell.y < ROWS
 
-@rpc("any_peer")
 func set_cell_type(cell:Vector2, type:int):
 	if not is_within_bounds(cell):
 		return

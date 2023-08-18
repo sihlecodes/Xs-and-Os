@@ -1,10 +1,12 @@
-[gd_scene load_steps=10 format=3 uid="uid://df1rucy3g6c40"]
+[gd_scene load_steps=12 format=3 uid="uid://df1rucy3g6c40"]
 
 [ext_resource type="Script" path="res://scipts/board.gd" id="1"]
 [ext_resource type="Script" path="res://scipts/game.gd" id="1_yweq4"]
 [ext_resource type="FontFile" uid="uid://brc816gdl87af" path="res://fonts/Roboto-Bold.ttf" id="2"]
-[ext_resource type="Script" path="res://Networking.gd" id="3_2xqbt"]
+[ext_resource type="Script" path="res://scipts/Networking.gd" id="2_y5n4c"]
+[ext_resource type="Script" path="res://scipts/networking/Server.gd" id="3_xgba2"]
 [ext_resource type="Script" path="res://scipts/main.gd" id="4"]
+[ext_resource type="Script" path="res://scipts/networking/Client.gd" id="4_jies1"]
 [ext_resource type="Script" path="res://scipts/strike.gd" id="5"]
 [ext_resource type="Theme" uid="uid://dauqppu1iyvav" path="res://theme.tres" id="6"]
 
@@ -30,7 +32,16 @@ script = ExtResource("4")
 
 [node name="Networking" type="Node" parent="."]
 unique_name_in_owner = true
-script = ExtResource("3_2xqbt")
+script = ExtResource("2_y5n4c")
+
+[node name="Server" type="Node" parent="Networking"]
+unique_name_in_owner = true
+script = ExtResource("3_xgba2")
+
+[node name="Client" type="Node" parent="Networking" node_paths=PackedStringArray("main")]
+unique_name_in_owner = true
+script = ExtResource("4_jies1")
+main = NodePath("../..")
 
 [node name="Game" type="Node" parent="."]
 unique_name_in_owner = true

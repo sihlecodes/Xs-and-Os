@@ -1,15 +1,15 @@
 extends Node
 
-@rpc
+class_name Main
+
 func show_hint(text: String):
 	%hint.text = text
 
-@rpc
 func show_text(text: String):
 	%display.text = text
 
 func _on_restart_pressed() -> void:
-	%Networking.request_restart.rpc_id(1)
+	%Server.request_restart.rpc_id(1)
 
 func _on_game_completed():
 	%Game.game_completed = true
