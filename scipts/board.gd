@@ -107,7 +107,6 @@ class Match extends RefCounted:
 	func _to_string():
 		return "%s %s -> %s" % ["X" if type == Piece.Types.X else "O", start, end]
 
-@rpc("any_peer")
 func check():
 	var empty_count = 0
 	for y in COLS:

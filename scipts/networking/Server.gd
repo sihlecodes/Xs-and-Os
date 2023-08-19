@@ -39,8 +39,6 @@ func request_set_cell_type(cell: Vector2, player_type: int):
 @rpc("any_peer")
 func request_show_text(message: String):
 	var session: Session = get_player_session()
-	var main: = get_parent()
-
 	session.rpc(%Client.show_text, message)
 
 @rpc("any_peer")
@@ -52,6 +50,10 @@ func request_check():
 func request_restart():
 	var session: Session = get_player_session()
 	# TODO: add handshake protocol
+
+	var player_id: = multiplayer.get_remote_sender_id()
+
+	session.rpc_excluding(player_id, %Client.show_restart_confirmation)
 	session.turn = 0
 	session.rpc(%Client.restart)
 

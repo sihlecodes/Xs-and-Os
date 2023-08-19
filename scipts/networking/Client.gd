@@ -12,6 +12,11 @@ func check():
 	%Board.check()
 
 @rpc
+func show_restart_confirmation():
+	# TODO: send respond back to the server
+	%RestartConfirmation.popup()
+
+@rpc
 func show_text(text: String):
 	main.show_text(text)
 
