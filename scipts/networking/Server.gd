@@ -52,10 +52,15 @@ func request_restart():
 	# TODO: add handshake protocol
 
 	var player_id: = multiplayer.get_remote_sender_id()
+	session.restart_requests[player_id] = true
 
-	session.rpc_excluding(player_id, %Client.show_restart_confirmation)
-	session.turn = 0
-	session.rpc(%Client.restart)
+	# TODO: use booleans stored in dict. instead
+	# TODO: don't hard code
+	if session.restart_requests.size() == 2:
+		session.rpc_excluding(player_id, %Client.show_restart_confirmation)
+	else:
+		session.turn = 0
+		session.rpc(%Client.restart)
 
 @rpc("any_peer")
 func request_turn_advance():

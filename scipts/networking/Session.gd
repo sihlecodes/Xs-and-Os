@@ -6,6 +6,7 @@ var player_ids: Array[int]
 
 var turn: int = 0
 var channel: int
+var restart_requests: = {}
 
 const MAX_PLAYERS: int = 2
 

@@ -44,8 +44,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 4.0
 offset_top = 4.0
-offset_right = -4.0
-offset_bottom = -4.0
+offset_right = 299.0
+offset_bottom = 96.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 10
@@ -165,6 +165,7 @@ script = ExtResource("5")
 theme = ExtResource("6")
 overshoot = 15
 
+[connection signal="close_requested" from="RestartConfirmation" to="RestartConfirmation" method="_on_close_requested"]
 [connection signal="game_completed" from="Board" to="." method="_on_game_completed"]
 [connection signal="game_tied" from="Board" to="." method="_on_game_tied"]
 [connection signal="game_won" from="Board" to="." method="_on_game_won"]
