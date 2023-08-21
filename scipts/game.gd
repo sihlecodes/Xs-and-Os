@@ -60,7 +60,7 @@ func _input(event: InputEvent):
 					%Server.request_check.rpc_id(1)
 					%Server.request_turn_advance.rpc_id(1)
 
-					var message: = ("O" if turn % 2 else "X") + "'s turn."
+					var message: = ("X" if turn % 2 else "O") + "'s turn."
 					%Server.request_show_text.rpc_id(1, message)
 
 func _ready():
