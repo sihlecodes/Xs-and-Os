@@ -4,12 +4,12 @@
 [ext_resource type="Script" path="res://scipts/game.gd" id="1_yweq4"]
 [ext_resource type="FontFile" uid="uid://brc816gdl87af" path="res://fonts/Roboto-Bold.ttf" id="2"]
 [ext_resource type="Script" path="res://scipts/networking/Networking.gd" id="2_6dxgx"]
-[ext_resource type="Script" path="res://restart_confirmation_popup.gd" id="2_hctff"]
 [ext_resource type="Script" path="res://scipts/networking/Server.gd" id="3_xgba2"]
 [ext_resource type="Script" path="res://scipts/main.gd" id="4"]
 [ext_resource type="Script" path="res://scipts/networking/Client.gd" id="4_jies1"]
 [ext_resource type="Script" path="res://scipts/strike.gd" id="5"]
 [ext_resource type="Theme" uid="uid://dauqppu1iyvav" path="res://theme.tres" id="6"]
+[ext_resource type="Script" path="res://scipts/restart_confirmation_popup.gd" id="10_qabh5"]
 
 [sub_resource type="FontFile" id="1"]
 fallbacks = Array[Font]([ExtResource("2")])
@@ -30,51 +30,6 @@ cache/0/16/0/kerning_overrides/16/0 = Vector2(0, 0)
 
 [node name="Main" type="Node"]
 script = ExtResource("4")
-
-[node name="RestartConfirmation" type="PopupPanel" parent="."]
-unique_name_in_owner = true
-initial_position = 2
-size = Vector2i(303, 100)
-always_on_top = true
-script = ExtResource("2_hctff")
-
-[node name="margins" type="MarginContainer" parent="RestartConfirmation"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 4.0
-offset_top = 4.0
-offset_right = 299.0
-offset_bottom = 96.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-
-[node name="vbox" type="VBoxContainer" parent="RestartConfirmation/margins"]
-layout_mode = 2
-
-[node name="label" type="Label" parent="RestartConfirmation/margins/vbox"]
-layout_mode = 2
-size_flags_vertical = 6
-text = "Would you like to restart the game?"
-
-[node name="buttons" type="HBoxContainer" parent="RestartConfirmation/margins/vbox"]
-layout_mode = 2
-
-[node name="yes" type="Button" parent="RestartConfirmation/margins/vbox/buttons"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Yes"
-
-[node name="no" type="Button" parent="RestartConfirmation/margins/vbox/buttons"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-text = "No"
 
 [node name="Networking" type="Node" parent="."]
 unique_name_in_owner = true
@@ -165,7 +120,52 @@ script = ExtResource("5")
 theme = ExtResource("6")
 overshoot = 15
 
-[connection signal="close_requested" from="RestartConfirmation" to="RestartConfirmation" method="_on_close_requested"]
+[node name="RestartConfirmation" type="PanelContainer" parent="canvas"]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -147.5
+offset_top = -40.5
+offset_right = 147.5
+offset_bottom = 40.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("10_qabh5")
+
+[node name="margins" type="MarginContainer" parent="canvas/RestartConfirmation"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="vbox" type="VBoxContainer" parent="canvas/RestartConfirmation/margins"]
+layout_mode = 2
+
+[node name="label" type="Label" parent="canvas/RestartConfirmation/margins/vbox"]
+layout_mode = 2
+size_flags_vertical = 6
+text = "Would you like to restart the game?"
+
+[node name="buttons" type="HBoxContainer" parent="canvas/RestartConfirmation/margins/vbox"]
+layout_mode = 2
+
+[node name="yes" type="Button" parent="canvas/RestartConfirmation/margins/vbox/buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Yes"
+
+[node name="no" type="Button" parent="canvas/RestartConfirmation/margins/vbox/buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "No"
+
 [connection signal="game_completed" from="Board" to="." method="_on_game_completed"]
 [connection signal="game_tied" from="Board" to="." method="_on_game_tied"]
 [connection signal="game_won" from="Board" to="." method="_on_game_won"]

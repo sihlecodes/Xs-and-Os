@@ -15,7 +15,7 @@ func _init(type: int, position: Vector2):
 func _draw():
 	if type == Types.O:
 		var diameter: float = theme.get_constant("diameter", "O")
-		draw_arc(Vector2(), diameter/2, 0, TAU, diameter, theme.get_color("stroke", "O"), theme.get_constant("stroke_width", "O"), true)
+		draw_arc(Vector2(), diameter/2, 0, TAU, int(diameter), theme.get_color("stroke", "O"), theme.get_constant("stroke_width", "O"), true)
 
 	elif type == Types.X:
 		var width: float = theme.get_constant("width", "X")

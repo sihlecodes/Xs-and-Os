@@ -1,4 +1,4 @@
-extends PopupPanel
+extends PanelContainer
 
 signal on_response(response: bool)
 
@@ -9,22 +9,26 @@ func _ready() -> void:
 	%no.pressed.connect(func(): _on_response_button_pressed(false))
 
 func async_popup(success: Callable, failure: Callable):
-	# TODO: fix logic
-	# TODO: account for null callbacks
+	if not success:
+		success = func(): pass
+
+	if not failure:
+		failure = func(): pass
+
 	var callback: = func(accepted: bool): (success if accepted else failure).call()
 	on_response.connect(callback, CONNECT_ONE_SHOT)
 
-	popup()
+	show()
 
+	print("no response yet")
 	await on_response
+	print("response came")
 
 func _on_response_button_pressed(accepted: bool):
 	explicit_response = true
 	on_response.emit(accepted)
 	print("explicit")
+	hide()
 
 func _on_close_requested() -> void:
-	if not explicit_response:
-		on_response.emit(false)
-
 	print("implicit")

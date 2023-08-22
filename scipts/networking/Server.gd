@@ -52,7 +52,10 @@ func request_restart():
 	# TODO: add handshake protocol
 
 	var player_id: = multiplayer.get_remote_sender_id()
+	print("before: ", session.restart_requests)
+
 	session.restart_requests[player_id] = true
+	print("after: ", session.restart_requests)
 
 	# TODO: use booleans stored in dict. instead
 	# TODO: don't hard code
