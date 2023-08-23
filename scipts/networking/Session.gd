@@ -16,14 +16,20 @@ func advance_turn():
 func add_restart_request_outcome(player_id: int, agreed: bool):
 	restart_request_outcomes[player_id] = agreed
 
-func restart_allowed() -> bool:
-	var all_voted: = restart_request_outcomes.size() == MAX_PLAYERS
-	var all_in_agreement: = restart_request_outcomes.values().all(func(x): return x)
+func restart_all_voted() -> bool:
+	return restart_request_outcomes.size() == MAX_PLAYERS
 
-	return all_voted and all_in_agreement
+func restart_all_in_agreement() -> bool:
+	return restart_request_outcomes.values().all(func(x): return x)
+
+func restart_allowed() -> bool:
+	return restart_all_voted() and restart_all_in_agreement()
+
+func clear_restart_requests():
+	restart_request_outcomes.clear()
 
 func restart():
-	restart_request_outcomes.clear()
+	clear_restart_requests()
 	turn = 0
 
 func add_player_id(player_id: int):

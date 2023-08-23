@@ -56,6 +56,10 @@ func request_restart():
 	if session.restart_allowed():
 		session.rpc(%Client.restart)
 		session.restart()
+
+	elif session.restart_all_voted():
+		session.clear_restart_requests()
+
 	else:
 		session.rpc_excluding(player_id, %Client.show_restart_confirmation)
 
@@ -64,6 +68,9 @@ func request_restart_cancel():
 	var session: Session = get_player_session()
 
 	session.add_restart_request_outcome(multiplayer.get_remote_sender_id(), false)
+
+	if session.restart_all_voted() and not session.restart_all_in_agreement():
+		session.clear_restart_requests()
 
 @rpc("any_peer")
 func request_turn_advance():
