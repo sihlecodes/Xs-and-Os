@@ -18,9 +18,12 @@ func async_popup(success: Callable, failure: Callable):
 	var callback: = func(accepted: bool): (success if accepted else failure).call()
 	on_response.connect(callback, CONNECT_ONE_SHOT)
 
-	show()
+	get_tree().paused = true
 
+	show()
 	await on_response
+
+	get_tree().paused = false
 
 func _on_response_button_pressed(accepted: bool):
 	explicit_response = true

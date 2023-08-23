@@ -122,6 +122,7 @@ overshoot = 15
 
 [node name="RestartConfirmation" type="PanelContainer" parent="canvas"]
 unique_name_in_owner = true
+process_mode = 3
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
