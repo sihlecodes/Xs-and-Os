@@ -49,26 +49,27 @@ func request_check():
 @rpc("any_peer")
 func request_restart():
 	var session: Session = get_player_session()
-	# TODO: add handshake protocol
 
 	var player_id: = multiplayer.get_remote_sender_id()
-	print("before: ", session.restart_requests)
+	session.add_restart_request_outcome(player_id, true)
 
-	session.restart_requests[player_id] = true
-	print("after: ", session.restart_requests)
-
-	# TODO: use booleans stored in dict. instead
-	# TODO: don't hard code
-	if session.restart_requests.size() == 2:
-		session.rpc_excluding(player_id, %Client.show_restart_confirmation)
-	else:
-		session.turn = 0
+	if session.restart_allowed():
 		session.rpc(%Client.restart)
+		session.restart()
+	else:
+		session.rpc_excluding(player_id, %Client.show_restart_confirmation)
+
+@rpc("any_peer")
+func request_restart_cancel():
+	var session: Session = get_player_session()
+
+	session.add_restart_request_outcome(multiplayer.get_remote_sender_id(), false)
 
 @rpc("any_peer")
 func request_turn_advance():
 	var session: Session = get_player_session()
-	session.turn += 1
+
+	session.advance_turn()
 	print(session)
 
 func _on_player_connected(player_id: int):

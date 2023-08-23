@@ -13,9 +13,10 @@ func check():
 
 @rpc
 func show_restart_confirmation():
-	# TODO: send respond back to the server
 	var success: = func(): %Server.request_restart.rpc_id(1)
-	await %RestartConfirmation.async_popup(success, func(): pass)
+	var failure: = func(): %Server.request_restart_cancel.rpc_id(1)
+
+	await %RestartConfirmation.async_popup(success, failure)
 
 @rpc
 func show_text(text: String):

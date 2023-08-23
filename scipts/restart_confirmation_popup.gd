@@ -20,15 +20,9 @@ func async_popup(success: Callable, failure: Callable):
 
 	show()
 
-	print("no response yet")
 	await on_response
-	print("response came")
 
 func _on_response_button_pressed(accepted: bool):
 	explicit_response = true
 	on_response.emit(accepted)
-	print("explicit")
 	hide()
-
-func _on_close_requested() -> void:
-	print("implicit")
