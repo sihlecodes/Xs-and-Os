@@ -13,6 +13,9 @@ const MAX_PLAYERS: int = 2
 func advance_turn():
 	turn += 1
 
+func has_active_restart_request(player_id: int) -> bool:
+	return restart_request_outcomes.has(player_id)
+
 func add_restart_request_outcome(player_id: int, agreed: bool):
 	restart_request_outcomes[player_id] = agreed
 

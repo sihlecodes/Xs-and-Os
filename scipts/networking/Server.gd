@@ -49,8 +49,11 @@ func request_check():
 @rpc("any_peer")
 func request_restart():
 	var session: Session = get_player_session()
-
 	var player_id: = multiplayer.get_remote_sender_id()
+
+	if session.has_active_restart_request(player_id):
+		return
+
 	session.add_restart_request_outcome(player_id, true)
 
 	if session.restart_allowed():
