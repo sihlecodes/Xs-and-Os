@@ -7,10 +7,15 @@ var type: int
 
 @onready var theme: Theme = get_parent().theme
 
-@warning_ignore("shadowed_variable", "shadowed_variable_base_class")
-func _init(type: int, position: Vector2):
-	self.position = position
-	self.type = type
+static func get_playable_types() -> Array:
+	return Types.values().slice(2)
+
+static func get_playable_count() -> int:
+	return get_playable_types().size()
+
+func _init(_type: int, _position: Vector2):
+	self.position = _position
+	self.type = _type
 
 func _draw():
 	if type == Types.O:

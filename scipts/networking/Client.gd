@@ -19,6 +19,15 @@ func show_restart_confirmation():
 	await %RestartConfirmation.async_popup(success, failure)
 
 @rpc
+func show_current_player(current_player_type: int):
+	var current_player_name: String = "%s's" % Piece.Types.find_key(current_player_type)
+
+	if current_player_type == player_type:
+		current_player_name = "YOUR"
+
+	show_text("%s turn" % current_player_name)
+
+@rpc
 func show_text(text: String):
 	main.show_text(text)
 

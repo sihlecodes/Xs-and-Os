@@ -2,18 +2,10 @@ extends Node
 
 class_name Server
 
-var players: = [] # lobby
+var pending_player_ids: Array[int] = [] # lobby
 var sessions: Array[Session] = []
 
 # TODO: move board checking logic here
-
-func start_game(session: Session):
-	var types: = [ Piece.Types.X, Piece.Types.O ]
-
-	for player_id in session.player_ids:
-		var type: int = types.pop_at(randi() % types.size())
-
-		%Client.set_player_type.rpc_id(player_id, type)
 
 func get_player_session() -> Session:
 	var player_id: = multiplayer.get_remote_sender_id()
@@ -24,11 +16,17 @@ func get_player_session() -> Session:
 	return
 
 @rpc("any_peer")
+func request_update_display():
+	var session: Session = get_player_session()
+
+	var current_player_type: = session.get_current_player_type()
+	session.rpc(%Client.show_current_player, current_player_type)
+
+@rpc("any_peer")
 func request_turn():
 	var player_id: = multiplayer.get_remote_sender_id()
 	var session: Session = get_player_session()
 
-	# TODO: make players known session ids instead of getting sessions using player ids
 	%Client.set_turn.rpc_id(player_id, session.turn)
 
 @rpc("any_peer")
@@ -52,7 +50,7 @@ func request_restart():
 	var player_id: = multiplayer.get_remote_sender_id()
 
 	if session.has_active_restart_request(player_id):
-		return
+		return # prevent further requests until everyone has voted
 
 	session.add_restart_request_outcome(player_id, true)
 
@@ -82,19 +80,29 @@ func request_turn_advance():
 	session.advance_turn()
 	print(session)
 
+func _get_players_per_session():
+	return min(Piece.get_playable_count(), Session.MAX_PLAYERS)
+
+func _create_session(player_ids: Array[int]):
+	var session: = Session.new()
+	var types: = Piece.get_playable_types()
+
+	for i in range(_get_players_per_session()):
+		var player_id: int = player_ids.pop_back()
+		var type: int = types.pop_at(randi() % types.size())
+
+		session.add_player(player_id, type)
+		%Client.set_player_type.rpc_id(player_id, type)
+
+	sessions.append(session)
+	session.rpc(%Client.restart)
+
 func _on_player_connected(player_id: int):
-	players.append(player_id)
+	pending_player_ids.append(player_id)
 	print("Player ", player_id, " has connected.")
 
-	if players.size() >= 2:
-		var session: = Session.new()
-
-		session.add_player_id(players.pop_front())
-		session.add_player_id(players.pop_front())
-
-		start_game(session)
-
-		sessions.append(session)
+	if pending_player_ids.size() >= _get_players_per_session():
+		_create_session(pending_player_ids)
 
 func _on_player_disconnected(player_id: int):
 	# TODO: Implement some logic to delete sessions
