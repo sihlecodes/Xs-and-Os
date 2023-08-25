@@ -91,7 +91,7 @@ func _create_session(player_ids: Array[int]):
 		var player_id: int = player_ids.pop_back()
 		var type: int = types.pop_at(randi() % types.size())
 
-		session.add_player(player_id, type)
+		session.add_player_id(player_id)
 		%Client.set_player_type.rpc_id(player_id, type)
 
 	sessions.append(session)

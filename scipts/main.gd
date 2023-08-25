@@ -2,6 +2,8 @@ extends Node
 
 class_name Main
 
+# TODO: prune unused methods / properties in the code base
+
 func show_hint(text: String):
 	%hint.text = text
 

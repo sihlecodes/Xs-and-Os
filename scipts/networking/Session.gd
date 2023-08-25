@@ -2,7 +2,7 @@ extends RefCounted
 
 class_name Session
 
-var players: Dictionary
+var player_ids: Array[int]
 
 var turn: int = 0
 var channel: int
@@ -15,9 +15,6 @@ func advance_turn():
 
 func get_current_player_type() -> int:
 	return 1 + (turn % Piece.get_playable_count())
-
-func get_player_id_with_type(type: int) -> int:
-	return players.find_key(type)
 
 func has_active_restart_request(player_id: int) -> bool:
 	return restart_request_outcomes.has(player_id)
@@ -41,17 +38,17 @@ func restart():
 	clear_restart_requests()
 	turn = 0
 
-func add_player(player_id: int, player_type: int):
-	if players.size() < MAX_PLAYERS:
-		players[player_id] = player_type
+func add_player_id(player_id: int):
+	if player_ids.size() < MAX_PLAYERS:
+		player_ids.append(player_id)
 	else:
 		printerr("Session: max player count has been reached")
 
 func has_player_id(player_id: int):
-	return players.has(player_id)
+	return player_ids.has(player_id)
 
 func rpc_excluding(target_id: int, callable: Callable, arg1=null, arg2=null):
-	for player_id in players:
+	for player_id in player_ids:
 		if player_id != target_id:
 			rpc_id(player_id, callable, arg1, arg2)
 
@@ -67,8 +64,8 @@ func rpc_id(player_id: int, callable: Callable, arg1=null, arg2=null):
 		callable.rpc_id(player_id, arg1, arg2)
 
 func rpc(callable: Callable, arg1=null, arg2=null):
-	for player_id in players:
+	for player_id in player_ids:
 		rpc_id(player_id, callable, arg1, arg2)
 
 func _to_string() -> String:
-	return "Session(%s, %s, %s)" % ([turn] + players.values())
+	return "Session(%s, %s, %s)" % ([turn] + player_ids)
