@@ -18,9 +18,17 @@ func get_player_session() -> Session:
 @rpc("any_peer")
 func request_update_display():
 	var session: Session = get_player_session()
-
 	var current_player_type: = session.get_current_player_type()
 	session.rpc(%Client.show_current_player, current_player_type)
+
+@rpc("any_peer")
+func request_turn_advance():
+	var session: Session = get_player_session()
+
+	session.advance_turn()
+	request_update_display()
+
+	print(session)
 
 @rpc("any_peer")
 func request_turn():
@@ -49,6 +57,9 @@ func request_restart():
 	var session: Session = get_player_session()
 	var player_id: = multiplayer.get_remote_sender_id()
 
+	if session.turn == 0:
+		return # the game just start, end restart requests
+
 	if session.has_active_restart_request(player_id):
 		return # prevent further requests until everyone has voted
 
@@ -72,13 +83,6 @@ func request_restart_cancel():
 
 	if session.restart_all_voted() and not session.restart_all_in_agreement():
 		session.clear_restart_requests()
-
-@rpc("any_peer")
-func request_turn_advance():
-	var session: Session = get_player_session()
-
-	session.advance_turn()
-	print(session)
 
 func _get_players_per_session():
 	return min(Piece.get_playable_count(), Session.MAX_PLAYERS)

@@ -59,5 +59,3 @@ func _input(event: InputEvent):
 
 					%Server.request_check.rpc_id(1)
 					%Server.request_turn_advance.rpc_id(1)
-
-					%Server.request_update_display.rpc_id(1)
