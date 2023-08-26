@@ -10,6 +10,8 @@ var restart_request_outcomes: = {}
 
 const MAX_PLAYERS: int = 2
 
+# TODO: sessions should the board
+
 func advance_turn():
 	turn += 1
 

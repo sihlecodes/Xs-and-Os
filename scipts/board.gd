@@ -1,5 +1,6 @@
 @tool
 extends Control
+# TODO: separate code into game logic (server side) and board renderer (client side)
 
 class_name Board
 
@@ -9,7 +10,6 @@ class_name Board
 var _board  = []
 var _pieces = []
 
-# values derived from the board art asset
 @export var border_width_inner: = 2
 @export var border_width_outer: = 4
 
