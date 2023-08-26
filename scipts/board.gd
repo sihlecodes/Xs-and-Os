@@ -22,10 +22,6 @@ var _pieces = []
 	get:
 		return get_effective_cell_size()
 
-signal game_completed
-signal game_won(match_)
-signal game_tied
-
 signal cell_type_changed
 
 func generate_empty_board():
@@ -122,13 +118,14 @@ func check():
 
 			for match_ in matches:
 				if match_:
-					game_completed.emit()
-					game_won.emit(match_)
-					return
+					%Game.declare_winner(match_)
+					return true
 
 	if empty_count == 0:
-		game_completed.emit()
-		game_tied.emit()
+		%Game.declare_draw()
+		return true
+
+	return false
 
 # returns true if a win condition for a type at a cell is found on the board
 func check_type_on_board(cell: Vector2, type: int) -> Match:

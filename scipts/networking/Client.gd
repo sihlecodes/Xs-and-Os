@@ -9,7 +9,10 @@ var session_id: int # TODO: implement logic
 
 @rpc
 func check():
-	%Board.check()
+	# TODO: show winner text
+	if %Board.check():
+		pass
+#		%Server.request_game_completed()
 
 @rpc
 func show_restart_confirmation():
@@ -20,6 +23,9 @@ func show_restart_confirmation():
 
 @rpc
 func show_current_player(current_player_type: int):
+	if %Game.is_over:
+		return
+
 	var current_player_name: String = "%s's" % Piece.Types.find_key(current_player_type)
 
 	if current_player_type == player_type:

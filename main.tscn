@@ -167,7 +167,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "No"
 
-[connection signal="game_completed" from="Board" to="." method="_on_game_completed"]
-[connection signal="game_tied" from="Board" to="." method="_on_game_tied"]
-[connection signal="game_won" from="Board" to="." method="_on_game_won"]
+[connection signal="game_completed" from="Game" to="Game" method="_on_game_completed"]
+[connection signal="game_tied" from="Game" to="Game" method="_on_game_tied"]
+[connection signal="game_won" from="Game" to="Game" method="_on_game_won"]
 [connection signal="pressed" from="restart" to="." method="_on_restart_pressed"]

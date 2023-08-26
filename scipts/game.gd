@@ -6,18 +6,29 @@ class_name Game
 @export var WIN_CONDITION = 3
 
 var turn: = 0
-var game_completed: = false
+var is_over: = false
 
 @onready var main: = get_parent()
 
+signal game_completed
+signal game_won(match_)
+signal game_tied
 signal turn_changed
+
+func declare_winner(match_: Board.Match):
+	game_completed.emit()
+	game_won.emit(match_)
+
+func declare_draw():
+	game_completed.emit()
+	game_tied.emit()
 
 func set_turn(_turn: int):
 	turn = _turn
 	turn_changed.emit()
 
 func restart():
-	game_completed = false
+	is_over = false
 	%Board.empty_board()
 	%Strike.reset()
 
@@ -26,11 +37,11 @@ func restart():
 
 func _input(event: InputEvent):
 	if event is InputEventKey:
-		if event.keycode == KEY_SPACE and event.is_pressed() and game_completed:
+		if event.keycode == KEY_SPACE and event.is_pressed() and is_over:
 			main._on_restart_pressed()
 
 	# ignore any further input processing if someone has won
-	if game_completed:
+	if is_over:
 		return
 
 	# only take mouse inputs if the cursor is inside the board's area
@@ -59,3 +70,21 @@ func _input(event: InputEvent):
 
 					%Server.request_check.rpc_id(1)
 					%Server.request_turn_advance.rpc_id(1)
+
+func _on_game_completed():
+	is_over = true
+	main.show_hint("Press RESTART.")
+
+func _on_game_tied():
+	main.show_text("Game tied. :C")
+
+func _on_game_won(_match: Board.Match):
+	%Strike.animate(
+		%Board.position + %Board.get_effective_cell_position(_match.start) + %Board.CELL_SIZE/2,
+		%Board.position + %Board.get_effective_cell_position(_match.end) + %Board.CELL_SIZE/2)
+
+	match _match.type:
+		Piece.Types.X:
+			main.show_text("X won the game!")
+		Piece.Types.O:
+			main.show_text("O won the game!")
